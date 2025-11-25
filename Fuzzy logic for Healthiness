@@ -4,13 +4,13 @@ import numpy as np
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 
-# Define universes of discourse
+
 height = ctrl.Antecedent(np.arange(140, 191, 1), 'height')   
 weight = ctrl.Antecedent(np.arange(40, 101, 1), 'weight')    
 healthiness = ctrl.Consequent(np.arange(0, 101, 1), 'healthiness')  
 
 
-# Define membership functions
+
 height['short'] = fuzz.trimf(height.universe, [140, 150, 160])
 height['medium'] = fuzz.trimf(height.universe, [155, 165, 175])
 height['tall'] = fuzz.trimf(height.universe, [170, 180, 190])
@@ -26,7 +26,7 @@ healthiness['healthy'] = fuzz.trimf(healthiness.universe, [30, 55, 80])
 healthiness['very_healthy'] = fuzz.trimf(healthiness.universe, [70, 85, 100])
 
 
-# Define fuzzy rules
+
 rule1 = ctrl.Rule(height['short'] & weight['light'], healthiness['very_healthy'])
 rule2 = ctrl.Rule(height['short'] & weight['normal'], healthiness['healthy'])
 rule3 = ctrl.Rule(height['short'] & weight['heavy'], healthiness['less_healthy'])
@@ -37,7 +37,7 @@ rule7 = ctrl.Rule(height['tall'] & weight['light'], healthiness['less_healthy'])
 rule8 = ctrl.Rule(height['tall'] & weight['normal'], healthiness['healthy'])
 rule9 = ctrl.Rule(height['tall'] & weight['heavy'], healthiness['very_healthy'])
 
-# Create control system
+
 health_ctrl = ctrl.ControlSystem([rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9])
 health_sim = ctrl.ControlSystemSimulation(health_ctrl)
 
@@ -46,9 +46,10 @@ health_sim = ctrl.ControlSystemSimulation(health_ctrl)
 health_sim.input['height'] = 170
 health_sim.input['weight'] = 68
 
+
 # Compute fuzzy output
 health_sim.compute()
 print(f"Healthiness: {health_sim.output['healthiness']:.2f}%")
 
-# Optional: visualize
+# visualize
 healthiness.view(sim=health_sim)
