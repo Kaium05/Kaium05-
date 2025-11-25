@@ -3,27 +3,41 @@ import numpy as np
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 
+
 assign = ctrl.Antecedent(np.arange(0, 101, 1), "assign")
 exam = ctrl.Antecedent(np.arange(0, 101, 1), "exam")
 grade = ctrl.Consequent(np.arange(0, 101, 1), "grade")
+
 
 assign["poor"] = fuzz.trimf(assign.universe, [0, 0, 50])
 assign["good"] = fuzz.trimf(assign.universe, [40, 60, 80])
 assign["excellent"] = fuzz.trimf(assign.universe, [70, 100, 100])
 
+
+
 exam["poor"] = fuzz.trimf(exam.universe, [0, 0, 50])
 exam["good"] = fuzz.trimf(exam.universe, [45, 65, 85])
 exam["excellent"] = fuzz.trimf(exam.universe, [80, 100, 100])
+
+
 
 grade["low"] = fuzz.trimf(grade.universe, [0, 0, 40])
 grade["medium"] = fuzz.trimf(grade.universe, [30, 60, 80])
 grade["high"] = fuzz.trimf(grade.universe, [70, 100, 100])
 
-rule1 = ctrl.Rule(assign["excellent"] & exam["excellent"], grade["high"])
-rule2 = ctrl.Rule(assign["good"] & exam["good"], grade["medium"])
-rule3 = ctrl.Rule(assign["poor"] & exam["poor"], grade["low"])
 
-grade_ctrl = ctrl.ControlSystem([rule1, rule2, rule3])
+rule1 = ctrl.Rule(assign["poor"] & exam["poor"], grade["low"])
+rule2 = ctrl.Rule(assign["poor"] & exam["good"], grade["low"])
+rule3 = ctrl.Rule(assign["poor"] & exam["excellent"], grade["medium"])
+rule4 = ctrl.Rule(assign["good"] & exam["poor"], grade["low"])
+rule5 = ctrl.Rule(assign["good"] & exam["good"], grade["medium"])
+rule6 = ctrl.Rule(assign["good"] & exam["excellent"], grade["high"])
+rule7 = ctrl.Rule(assign["excellent"] & exam["poor"], grade["medium"])
+rule8 = ctrl.Rule(assign["excellent"] & exam["good"], grade["high"])
+rule9 = ctrl.Rule(assign["excellent"] & exam["excellent"], grade["high"])
+
+
+grade_ctrl = ctrl.ControlSystem([rule1, rule2, rule3,rule4, rule5, rule6,rule7, rule8, rule9])
 grade_sim = ctrl.ControlSystemSimulation(grade_ctrl)
 
 grade_sim.input["assign"] = 72
